@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+    plastic:
+        image: plasticscm:bionic
+        build: "./plasticscm-server-netcore:bionic"
+        container_name: plasticscm
+        command: start -v #config #Must be configured interactivly once when no config files and license are provided
+        ports:
+              - "8087:8087"
+              - "8088:8088"
+              - "7178:7178"
+              - "7179:7179"
+
+        volumes:
+            - type: bind
+              source: "./conf/"
+              target: "/conf/"
+            - type: volume
+              source: db
+              target: "/db/jet"
+            - type: volume
+              source: logs
+              target: "/logs"
+             
+volumes:
+   db:
+       name: plasticscm_db
+   logs:
+       name: plasticscm_logs
+       
+
