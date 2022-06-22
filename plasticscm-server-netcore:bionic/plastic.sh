@@ -277,7 +277,7 @@ function sync_config {
                 [[ ! $QUIET && $VERBOSE ]] && echo "     File already exists in /conf/."
             else
                 [ ! $QUIET ] && echo -e "$ERR   $f"
-                [ ! $QUIET ] && echo "     File exists in /conf/ but is not linked."
+                [ ! $QUIET ] && echo "     File exists in /conf/ but not on the server."
             fi
         else
             if [ -f "$SERVER_DIRECTORY/$f" ] ; then
