@@ -170,7 +170,7 @@ function setup_config {
         ln -s "/conf/plasticd.lic" $SERVER_DIRECTORY
         [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
     else
-        [ ! $QUIET ] && echo -e "$ERR   No license file found in either conf/ or the server. Something went wrong."
+        [ ! $QUIET ] && echo -e "$ERR   No license file found in either /conf/ or the server. Something went wrong."
         exit 2
     fi
     
