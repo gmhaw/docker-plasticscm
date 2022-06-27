@@ -5,18 +5,22 @@
 FROM ubuntu:bionic
 LABEL maintainer="linard.hug@haw-hamburg.de"
 
-ARG VERSION=9.0.16.5201
-
 ARG DEBIAN_FRONTEND=noninteractive
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
-# Update package list and install wget, gnupg2 and vim
-RUN apt-get update && apt-get install -y wget gnupg2 vim apt-transport-https && \
+# Update package list and install required tools
+RUN apt-get update && apt-get install -y wget gnupg2 vim apt-transport-https \
+    # Install all dependecies
+    libc6 libgcc1 libgssapi-krb5-2 libstdc++6 zlib1g sudo liblttng-ust0 libssl1.1 libkrb5-3 libicu60 && \
+    # Clean up temporary files
+    rm -rf /var/log/* && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG VERSION
+
     # Register the plastic scm repositiory
-    wget -qO - "https://www.plasticscm.com/plasticrepo/stable/ubuntu/Release.key" | apt-key add - && \
+RUN wget -qO - "https://www.plasticscm.com/plasticrepo/stable/ubuntu/Release.key" | apt-key add - && \
     echo "deb https://www.plasticscm.com/plasticrepo/stable/ubuntu/ ./" > /etc/apt/sources.list.d/plasticscm-stable.list && \
-    # Install all dependencies
-    apt-get install -y libc6 libgcc1 libgssapi-krb5-2 libstdc++6 zlib1g sudo liblttng-ust0 libssl1.1 libkrb5-3 libicu60 && \
     # Install plastic scm server manually
     wget -qO "/plasticscm.tar.gz" "https://s3.eu-west-2.amazonaws.com/plastic-releases/releases/$VERSION/plasticscm/linux/PlasticSCM-$VERSION-linux-x64-server-netcore.tar.gz" && \
     mkdir -p "/opt/plasticscm5/" && \
