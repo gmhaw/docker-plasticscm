@@ -1,4 +1,5 @@
-# This installs plasticscm-server-netcore but manually and not through the package manager as to run it manually and not through systemd as this is not available inside Docker
+# This installs plasticscm-server-netcore manually and not through the package manager.
+# This allows us to run 'plasticd' manually and not through systemd as this is not available inside Docker.
 
 # Ubunut 18.04 LTS
 FROM ubuntu:bionic
