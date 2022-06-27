@@ -25,7 +25,7 @@ B='\033[1;37m'
 NC='\033[0m'
 
 function print_help() {    
-    echo "Plastic.sh is a setup script for this docker container."
+    echo "plastic.sh is a setup script for this docker container."
     echo -e "Usage:\n\tplastic.sh [-v -q -h] [COMMAND]"
     echo -e "\nAvailable commands:"
     echo -e "\tconfig    Configures the server"
