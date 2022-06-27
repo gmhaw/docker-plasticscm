@@ -1,32 +1,45 @@
-version: "3.8"
+version: '3.8'
 
 services:
     plastic:
-        image: plasticscm:bionic
-        build: "./plasticscm-server-netcore:bionic"
+        image: gmhaw/plasticscm-server-netcore:latest
         container_name: plasticscm
-        command: start -v #config #Must be configured interactivly once when no config files and license are provided
-        ports:
-              - "8087:8087"
-              - "8088:8088"
-              - "7178:7178"
-              - "7179:7179"
-
+        restart: unless-stopped
+        command: -v start # Must be configured interactively once using 'config' when no config files and license are provided
+        expose:
+            - '7179' # Webadmin SSL port
+            - '8088' # Plastic SSL port
         volumes:
-            - type: bind
-              source: "./conf/"
-              target: "/conf/"
+            - type: volume
+              source: config
+              target: '/conf/'
             - type: volume
               source: db
-              target: "/db/jet"
+              target: '/db/jet'
             - type: volume
               source: logs
-              target: "/logs"
-             
+              target: '/logs'
+        labels:
+            - traefik.enable=true
+            # Plastic VCS Service (SSL)
+            - traefik.tcp.routers.plastic.rule=HostSNI(`plastic.mycompany.com`)
+            - traefik.tcp.routers.plastic.entrypoints=plastic #8088
+            - traefik.tcp.routers.plastic.service=plastic
+            - traefik.tcp.routers.plastic.tls=true
+            - traefik.tcp.routers.plastic.tls.passthrough=true
+            - traefik.tcp.services.plastic.loadbalancer.server.port=8088 # SSL connection
+            # Plastic Webadmin (HTTPS)
+            - traefik.tcp.routers.plasticweb.rule=HostSNI(`plastic.mycompany.com`)
+            - traefik.tcp.routers.plasticweb.entrypoints=websecure #443
+            - traefik.tcp.routers.plasticweb.service=plastic-webadmin
+            - traefik.tcp.routers.plasticweb.tls=true
+            - traefik.tcp.routers.plasticweb.tls.passthrough=true
+            - traefik.tcp.services.plastic-webadmin.loadbalancer.server.port=7179
+
 volumes:
+   config:
+       name: plasticscm_config
    db:
        name: plasticscm_db
    logs:
        name: plasticscm_logs
-       
-
