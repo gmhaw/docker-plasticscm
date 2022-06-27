@@ -7,20 +7,22 @@ SERVER_DIRECTORY=/opt/plasticscm5/server
 plasticd=$SERVER_DIRECTORY/plasticd
 umtool="$plasticd umtool"
 
+# Coloured labels
 OK='\033[1;32mOK\033[0m'
 WARN='\033[1;33m!!\033[0m'
 ERR='\033[1;31m!!\033[0m'
 
 MISS='\033[1;33mMISS\033[0m'
 
-B='\033[1;37m'
-NC='\033[0m'
-
 SYNC='\033[1;32mSYNC\033[0m'
 MOVE='\033[1;36mMOVE\033[0m'
 MOVEARROW='\033[1;36m<-\033[0m'
 LINK='\033[1;32mLINK\033[0m'
 LINKARROW='\033[1;32m->\033[0m'
+
+# Bold & Clear
+B='\033[1;37m'
+NC='\033[0m'
 
 function print_help() {    
     echo "Plastic.sh is a setup script for this docker container."
