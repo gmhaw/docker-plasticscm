@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+CONFIG_VOLUME=/conf
+
 SERVER_DIRECTORY=/opt/plasticscm5/server
 plasticd=$SERVER_DIRECTORY/plasticd
 umtool="$plasticd umtool"
@@ -119,27 +121,27 @@ function setup_config {
 
     [ ! $QUIET ] && echo ""
     [ ! $QUIET ] && echo "Setting up configuration files and linking."
-    [ ! $QUIET ] && echo -e "/conf/ $LINKARROW $SERVER_DIRECTORY/"
+    [ ! $QUIET ] && echo -e "$CONFIG_VOLUME/ $LINKARROW $SERVER_DIRECTORY/"
     
     [ ! $QUIET ] && echo -e "${B}CONFIGURATIONS:${NC}"                  
     for f in "${files[@]}"
     do
         [ ! $QUIET ] && echo -e "$OK   $f"        
-        if [ ! -f "/conf/$f" ]; then
+        if [ ! -f "$CONFIG_VOLUME/$f" ]; then
         # If no file comes preconfigured in /conf
-            [ ! $QUIET ] && echo -e -n "     $MISS Not provided by /conf. "
+            [ ! $QUIET ] && echo -e -n "     $MISS Not provided by $CONFIG_VOLUME/. "
             # Check if the server offers a preconfigured file
             if [ -f "$SERVER_DIRECTORY/$f" ] ; then
                 [ ! $QUIET ] && echo "Found existing $f in server."
-                mv "$SERVER_DIRECTORY/$f" "/conf/$f"
-                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $MOVE /conf/$f $MOVEARROW $SERVER_DIRECTORY/$f"                
+                mv "$SERVER_DIRECTORY/$f" "$CONFIG_VOLUME/$f"
+                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $MOVE $CONFIG_VOLUME/$f $MOVEARROW $SERVER_DIRECTORY/$f"                
             else
             # Create a new file otherwise
-                [ ! $QUIET ] && echo "Creating new file in /conf."
-                touch "/conf/$f"
+                [ ! $QUIET ] && echo "Creating new file in $CONFIG_VOLUME/."
+                touch "$CONFIG_VOLUME/$f"
             fi
-            ln -s "/conf/$f" $SERVER_DIRECTORY
-            [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/$f $LINKARROW $SERVER_DIRECTORY/$f"                    
+            ln -s "$CONFIG_VOLUME/$f" $SERVER_DIRECTORY
+            [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/$f $LINKARROW $SERVER_DIRECTORY/$f"                    
         else
         # If files comes preconfigured in /conf
             # Check if a file already exists in the server for some reason
@@ -147,30 +149,30 @@ function setup_config {
                 [ ! $QUIET ] && echo -e "     $WARN File already existing in server. Renaming as .bak"
                 mv "$SERVER_DIRECTORY/$f" "$SERVER_DIRECTORY/$f.bak"
             fi
-            ln -s "/conf/$f" $SERVER_DIRECTORY
-            [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/$f $LINKARROW $SERVER_DIRECTORY/$f"                      
+            ln -s "$CONFIG_VOLUME/$f" $SERVER_DIRECTORY
+            [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/$f $LINKARROW $SERVER_DIRECTORY/$f"                      
         fi        
     done
     
     [ ! $QUIET ] && echo -e "\n${B}LICENSE:${NC}"
-    if [ -f "/conf/plasticd.lic" ]; then
+    if [ -f "$CONFIG_VOLUME/plasticd.lic" ]; then
         [ ! $QUIET ] && echo -e "$OK   plasticd.lic"
-        [ ! $QUIET ] && echo "     License file found in /conf."
+        [ ! $QUIET ] && echo "     License file found in $CONFIG_VOLUME/."
         if [ -f "$SERVER_DIRECTORY/plasticd.lic" ] ; then
             [ ! $QUIET ] && echo -e "     Temporary license existing in server. Renaming as .bak"
             mv "$SERVER_DIRECTORY/plasticd.lic" "$SERVER_DIRECTORY/plasticd.lic.bak"
         fi
-        ln -s "/conf/plasticd.lic" $SERVER_DIRECTORY
-        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
+        ln -s "$CONFIG_VOLUME/plasticd.lic" $SERVER_DIRECTORY
+        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
     elif [ -f "$SERVER_DIRECTORY/plasticd.lic" ] ; then
         [ ! $QUIET ] && echo -e "$OK   plasticd.lic"
         [ ! $QUIET ] && echo "     License file found in the server."
-        mv "$SERVER_DIRECTORY/plasticd.lic" "/conf/plasticd.lic"
-        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $MOVE /conf/plasticd.lic $MOVEARROW $SERVER_DIRECTORY/plasticd.lic"
-        ln -s "/conf/plasticd.lic" $SERVER_DIRECTORY
-        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
+        mv "$SERVER_DIRECTORY/plasticd.lic" "$CONFIG_VOLUME/plasticd.lic"
+        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $MOVE $CONFIG_VOLUME/plasticd.lic $MOVEARROW $SERVER_DIRECTORY/plasticd.lic"
+        ln -s "$CONFIG_VOLUME/plasticd.lic" $SERVER_DIRECTORY
+        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
     else
-        [ ! $QUIET ] && echo -e "$ERR   No license file found in either /conf/ or the server. Something went wrong."
+        [ ! $QUIET ] && echo -e "$ERR   No license file found in either $CONFIG_VOLUME/ or the server. Something went wrong."
         exit 2
     fi
     
@@ -205,12 +207,12 @@ function link_config {
 
     [ ! $QUIET ] && echo ""
     [ ! $QUIET ] && echo "Linking configurations for configured server."
-    [ ! $QUIET ] && echo -e "/conf/ $LINKARROW $SERVER_DIRECTORY/"
+    [ ! $QUIET ] && echo -e "$CONFIG_VOLUME/ $LINKARROW $SERVER_DIRECTORY/"
     
     [ ! $QUIET ] && echo -e "${B}CONFIGURATIONS:${NC}"
     for f in "${files[@]}"
     do
-        if [ -f "/conf/$f" ] ; then      
+        if [ -f "$CONFIG_VOLUME/$f" ] ; then      
             [ ! $QUIET ] && echo -e "$OK   $f"
             # Check if we are already linked for some reason
             if [ -L "$SERVER_DIRECTORY/$f" ] ; then
@@ -221,8 +223,8 @@ function link_config {
                     [ ! $QUIET ] && echo -e "     $WARN File already existing in server. Renaming as .bak"
                     mv "$SERVER_DIRECTORY/$f" "$SERVER_DIRECTORY/$f.bak"
                 fi
-                ln -s "/conf/$f" $SERVER_DIRECTORY
-                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/$f $LINKARROW $SERVER_DIRECTORY/$f"
+                ln -s "$CONFIG_VOLUME/$f" $SERVER_DIRECTORY
+                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/$f $LINKARROW $SERVER_DIRECTORY/$f"
             fi
         else
             [ ! $QUIET ] && echo -e "$MISS $f"
@@ -230,19 +232,19 @@ function link_config {
     done
     
     [ ! $QUIET ] && echo -e "\n${B}LICENSE:${NC}"
-    if [ -f "/conf/plasticd.lic" ] ; then        
+    if [ -f "$CONFIG_VOLUME/plasticd.lic" ] ; then        
         [ ! $QUIET ] && echo -e "$OK   plasticd.lic"
-        ln -s -f "/conf/plasticd.lic" $SERVER_DIRECTORY
-        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
+        ln -s -f "$CONFIG_VOLUME/plasticd.lic" $SERVER_DIRECTORY
+        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
     else
         [ ! $QUIET ] && echo -e "$ERR   plasticd.lic"
-        [ ! $QUIET ] && echo -e "$     No license file found in /conf."
+        [ ! $QUIET ] && echo -e "$     No license file found in $CONFIG_VOLUME/."
         exit 2
     fi
-    if [ -f "/conf/plasticd.token.lic" ] ; then        
+    if [ -f "$CONFIG_VOLUME/plasticd.token.lic" ] ; then        
         [ ! $QUIET ] && echo -e "$OK   plasticd.token.lic"
-        ln -s -f "/conf/plasticd.lic" $SERVER_DIRECTORY
-        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
+        ln -s -f "$CONFIG_VOLUME/plasticd.lic" $SERVER_DIRECTORY
+        [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/plasticd.lic $LINKARROW $SERVER_DIRECTORY/plasticd.lic"
     else
         [ ! $QUIET ] && echo -e "$MISS plasticd.token.lic"
     fi
@@ -266,26 +268,26 @@ function sync_config {
                         "plasticd.token.lic"
                         )
       
-    [ ! $QUIET ] && echo "Syncing all configurations between server and /conf."
+    [ ! $QUIET ] && echo "Syncing all configurations between server and $CONFIG_VOLUME/."
     
     [ ! $QUIET ] && echo -e "${B}CONFIGURATIONS:${NC}"          
     for f in "${files[@]}"
     do
-        if [ -f "/conf/$f" ] ; then
+        if [ -f "$CONFIG_VOLUME/$f" ] ; then
             if [ -L "$SERVER_DIRECTORY/$f" ] ; then
                 [ ! $QUIET ] && echo -e "$OK   $f"
-                [[ ! $QUIET && $VERBOSE ]] && echo "     File already exists in /conf/."
+                [[ ! $QUIET && $VERBOSE ]] && echo "     File already exists in $CONFIG_VOLUME/."
             else
                 [ ! $QUIET ] && echo -e "$ERR   $f"
-                [ ! $QUIET ] && echo "     File exists in /conf/ but not on the server."
+                [ ! $QUIET ] && echo "     File exists in $CONFIG_VOLUME/ but not on the server."
             fi
         else
             if [ -f "$SERVER_DIRECTORY/$f" ] ; then
                 [ ! $QUIET ] && echo -e "$SYNC $f"
-                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $MOVE /conf/$f $MOVEARROW $SERVER_DIRECTORY/$f"
-                mv "$SERVER_DIRECTORY/$f" "/conf/$f"
-                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/$f $LINKARROW $SERVER_DIRECTORY/$f"
-                ln -s "/conf/$f" $SERVER_DIRECTORY
+                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $MOVE $CONFIG_VOLUME/$f $MOVEARROW $SERVER_DIRECTORY/$f"
+                mv "$SERVER_DIRECTORY/$f" "$CONFIG_VOLUME/$f"
+                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/$f $LINKARROW $SERVER_DIRECTORY/$f"
+                ln -s "$CONFIG_VOLUME/$f" $SERVER_DIRECTORY
             else
                 [ ! $QUIET ] && echo -e "$MISS $f"
             fi
@@ -295,15 +297,15 @@ function sync_config {
     [ ! $QUIET ] && echo -e "\n${B}LICENSE:${NC}"
     for f in "${license[@]}"
     do
-        if [ -f "/conf/$f" ] ; then        
+        if [ -f "$CONFIG_VOLUME/$f" ] ; then        
             [ ! $QUIET ] && echo -e "$OK   $f"
         else
             if [ -f "$SERVER_DIRECTORY/$f" ] ; then
                 [ ! $QUIET ] && echo -e "$SYNC $f"
-                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $MOVE /conf/$f $MOVEARROW $SERVER_DIRECTORY/$f"
-                mv "$SERVER_DIRECTORY/$f" "/conf/$f"
-                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK /conf/$f $LINKARROW $SERVER_DIRECTORY/$f"
-                ln -s "/conf/$f" $SERVER_DIRECTORY
+                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $MOVE $CONFIG_VOLUME/$f $MOVEARROW $SERVER_DIRECTORY/$f"
+                mv "$SERVER_DIRECTORY/$f" "$CONFIG_VOLUME/$f"
+                [[ ! $QUIET && $VERBOSE ]] && echo -e "     $LINK $CONFIG_VOLUME/$f $LINKARROW $SERVER_DIRECTORY/$f"
+                ln -s "$CONFIG_VOLUME/$f" $SERVER_DIRECTORY
             else
                 [ ! $QUIET ] && echo -e "$MISS $f"
             fi
