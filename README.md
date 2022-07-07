@@ -132,7 +132,7 @@ services:
         restart: unless-stopped
         command: -v start # Must be configured interactively once using 'config' when no config files and license are provided
         expose:
-            - '7179' # Webadmin SSL port
+            - '7179' # Webadmin HTTPS port
             - '8088' # Plastic SSL port
         volumes:
             - type: volume
@@ -153,13 +153,13 @@ services:
             - traefik.tcp.routers.plastic.tls=true
             - traefik.tcp.routers.plastic.tls.passthrough=true
             - traefik.tcp.services.plastic.loadbalancer.server.port=8088 # SSL connection
-            # Plastic Webadmin  
+            # Plastic Webadmin (HTTPS)
             - traefik.tcp.routers.plasticweb.rule=HostSNI(`plastic.mycompany.com`)
             - traefik.tcp.routers.plasticweb.entrypoints=websecure #443
             - traefik.tcp.routers.plasticweb.service=plastic-webadmin
             - traefik.tcp.routers.plasticweb.tls=true
             - traefik.tcp.routers.plasticweb.tls.passthrough=true
-            - traefik.tcp.services.plastic-webadmin.loadbalancer.server.port=7179
+            - traefik.tcp.services.plastic-webadmin.loadbalancer.server.port=7179 # HTTPS connection
 
 volumes:
    config:

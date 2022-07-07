@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-    plastic:
+    plasticscm:
         image: gmhaw/plasticscm-server-netcore:latest
         container_name: plasticscm
         restart: unless-stopped
         command: -v start # Must be configured interactively once using 'config' when no config files and license are provided
         expose:
-            - '7179' # Webadmin SSL port
+            - '7179' # Webadmin HTTPS port
             - '8088' # Plastic SSL port
         volumes:
             - type: volume
@@ -34,7 +34,7 @@ services:
             - traefik.tcp.routers.plasticweb.service=plastic-webadmin
             - traefik.tcp.routers.plasticweb.tls=true
             - traefik.tcp.routers.plasticweb.tls.passthrough=true
-            - traefik.tcp.services.plastic-webadmin.loadbalancer.server.port=7179
+            - traefik.tcp.services.plastic-webadmin.loadbalancer.server.port=7179 # HTTPS connection
 
 volumes:
    config:
