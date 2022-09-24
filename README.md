@@ -17,7 +17,7 @@ Between v8 and v10, both a Mono and .NET Core version of PlasticSCM existed. Thi
 |[10](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=10)|Latest v10 release on the latest supported version of Ubuntu.|2022-03-03|[Permalink](https://www.plasticscm.com/download/releasenotes/from/10.0.16.5328/to/10.0.16.6656)
 |[9](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=9)|Latest v9 release on the latest supported version of Ubuntu.|2021-04-05|[Permalink](https://www.plasticscm.com/download/releasenotes/from/9.0.16.4057/to/9.0.16.5315)
 
-**Support for Ubuntu 20.04/22.04 is currently missing due to a missing dependency.**
+**There is currently no support for Ubuntu 20.04/22.04 due to a missing dependency.**
 
 ## Volumes
 
@@ -110,11 +110,11 @@ which is currently not documented in the PlasticSCM installation guide.
 
 ### Custom certificate for the webadmin
 
-By default the webadmin uses the same certificate as the SSL port configuration for the PlasticSCM VCS service, as set in the webadmin console or `/conf/network.conf`. This certificate is self-signed when auto-generated. This means all browsers will warn you to access the webadmin due to an unsecure certificate.
+By default the webadmin uses the same certificate as the **first** SSL port configuration for the PlasticSCM VCS service, as set in the webadmin console or `/conf/network.conf`. This certificate is self-signed when auto-generated. This means all browsers will warn you to access the webadmin due to an unsecure certificate.
 
 Currently there is no way to specify a certificate just for the webadmin, but there is a workaround:
 
-Create a second SSL port configuration in the webadmin and place it at the top of the list. Use an unexposed port (and maybe check 'Localhost only') and specify a different certificate. Here you can e.g. specifiy a certifcate signed by letsencrypt. The certificates should be placed in `/opt/plasticscm5/server/`. The webadmin will use the certificate for this entry for it's HTTPS endpoint.
+Create a second SSL port configuration in the webadmin and **place it at the top of the list**. Use an unexposed port (and maybe check 'Localhost only') and specify a different certificate. Here you can specifiy a signed certifcate e.g. by letsencrypt. The certificates should be placed in `/opt/plasticscm5/server/`. The webadmin will use the certificate for this entry for it's HTTPS endpoint.
 
 ![](https://i.imgur.com/GFmJAPy.png)
 
