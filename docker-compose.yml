@@ -19,6 +19,10 @@ services:
             - type: volume
               source: logs
               target: '/logs'
+            # bind the certificate into the plastiscm server directory; Will be overwritten from time to time
+            - type: bind
+              source: ./certs/plastic.mycompany.com.pfx
+              target: '/opt/plasticscm5/server/plastic.mycompany.com.pfx'
         labels:
             - traefik.enable=true
             # Plastic VCS Service (SSL)
@@ -35,6 +39,31 @@ services:
             - traefik.tcp.routers.plasticweb.tls=true
             - traefik.tcp.routers.plasticweb.tls.passthrough=true
             - traefik.tcp.services.plastic-webadmin.loadbalancer.server.port=7179 # HTTPS connection
+    
+    traefik-certs-dumper:
+        image: ldez/traefik-certs-dumper:latest
+        container_name: traefik-certs-dumper
+        entrypoint: sh -c '
+          apk add jq openssl
+          ; while ! [ -e /data/acme.json ]
+          || ! [ `jq ".[] | .Certificates | length" /data/acme.json` != 0 ]; do
+          sleep 1
+          ; done
+          && traefik-certs-dumper file --version v2 --watch
+          --source /data/acme.json --dest /data/certs --domain-subdir=true --crt-ext=.pem
+          --post-hook "sh hook.sh"'
+        volumes:
+            # location of acme.json created by traefik; All certs will also dumped in here
+            - type: bind
+              source: '../traefik/letsencrypt/'
+              target: '/data/'
+            - type: bind
+              source: './create_pfx.sh'
+              target: '/hook.sh'
+            # target location for the created .pfx certificates; Also bound in the plasticscm service
+            - type: bind
+              source: './certs/'
+              target: '/certs/'
 
 volumes:
    config:
