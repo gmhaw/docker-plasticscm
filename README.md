@@ -4,6 +4,8 @@ This image deploys a PlasticSCM server on Ubuntu for on-premise hosting.
 
 Between v8 and v10, both a Mono and .NET Core version of PlasticSCM existed. This image always used the "newer" .NET Core version named 'plasticscm-server-netcore'. The image was named after this and was not renamed since.
 
+The source for this image can be viewed on Github: [gmhaw/docker-plasticscm](https://github.com/gmhaw/docker-plasticscm)
+
 ## Version tags
 
 *This table lists the latest images for each major version and explains the usage of the different tags as well.*
