@@ -51,7 +51,7 @@ services:
           ; done
           && traefik-certs-dumper file --version v2 --watch
           --source /data/acme.json --dest /data/certs --domain-subdir=true --crt-ext=.pem
-          --post-hook "sh hook.sh"'
+          --post-hook "sh post_hook.sh"'
         volumes:
             # location of acme.json created by traefik; All certs will also dumped in here
             - type: bind
@@ -59,7 +59,7 @@ services:
               target: '/data/'
             - type: bind
               source: './create_pfx.sh'
-              target: '/hook.sh'
+              target: '/post_hook.sh'
             # target location for the created .pfx certificates; Also bound in the plasticscm service
             - type: bind
               source: './certs/'

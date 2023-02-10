@@ -10,10 +10,10 @@ Between v8 and v10, both a Mono and .NET Core version of PlasticSCM existed. Thi
 
 |Tag| Description|Release|Release notes|
 |---|---|---|---|
-|[latest](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=latest)|Always the latest version of both Ubuntu and PlasticSCM.|**2022-09-22**|[Permalink](https://www.plasticscm.com/download/releasenotes/11.0.16.7419)
-|[bionic](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=bionic)|Ubuntu release using the latest supported version of PlastiSCM.|**2022-09-22**|[Permalink](https://www.plasticscm.com/download/releasenotes/11.0.16.7419)
-|[11.0.16.7419](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=11.0.16.7419)|Specific release on the latest supported version of Ubuntu.|**2022-09-22**|[Permalink](https://www.plasticscm.com/download/releasenotes/11.0.16.7419)
-|[11](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=11)|Latest v11 release on the latest supported version of Ubuntu.|**2022-09-22**|[Permalink](https://www.plasticscm.com/download/releasenotes/from/11.0.16.6683/to/11.0.16.7419)
+|[latest](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=latest)|Always the latest version of both Ubuntu and PlasticSCM.|**2023-02-09**|[Permalink](https://www.plasticscm.com/download/releasenotes/11.0.16.7762)
+|[bionic](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=bionic)|Ubuntu release using the latest supported version of PlastiSCM.|**2023-02-09**|[Permalink](https://www.plasticscm.com/download/releasenotes/11.0.16.7762)
+|[11.0.16.7762](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=11.0.16.7762)|Specific release on the latest supported version of Ubuntu.|**2023-02-09**|[Permalink](https://www.plasticscm.com/download/releasenotes/11.0.16.7762)
+|[11](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=11)|Latest v11 release on the latest supported version of Ubuntu.|**2023-02-09**|[Permalink](https://www.plasticscm.com/download/releasenotes/from/11.0.16.6683/to/11.0.16.7762)
 |[10](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=10)|Latest v10 release on the latest supported version of Ubuntu.|2022-03-03|[Permalink](https://www.plasticscm.com/download/releasenotes/from/10.0.16.5328/to/10.0.16.6656)
 |[9](https://hub.docker.com/r/gmhaw/plasticscm-server-netcore/tags?name=9)|Latest v9 release on the latest supported version of Ubuntu.|2021-04-05|[Permalink](https://www.plasticscm.com/download/releasenotes/from/9.0.16.4057/to/9.0.16.5315)
 
@@ -188,7 +188,7 @@ services:
           ; done
           && traefik-certs-dumper file --version v2 --watch
           --source /data/acme.json --dest /data/certs --domain-subdir=true --crt-ext=.pem
-          --post-hook "sh hook.sh"'
+          --post-hook "sh post_hook.sh"'
         volumes:
             # location of acme.json created by traefik; All certs will also dumped in here
             - type: bind
@@ -196,7 +196,7 @@ services:
               target: '/data/'
             - type: bind
               source: './create_pfx.sh'
-              target: '/hook.sh'
+              target: '/post_hook.sh'
             # target location for the created .pfx certificates; Also bound in the plasticscm service
             - type: bind
               source: './certs/'
