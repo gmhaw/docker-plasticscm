@@ -21,7 +21,7 @@ services:
               target: '/logs'
             # bind the certificate into the plastiscm server directory; Will be overwritten from time to time
             - type: bind
-              source: ./certs/plastic.mycompany.com.pfx
+              source: './certs/plastic.mycompany.com.pfx'
               target: '/opt/plasticscm5/server/plastic.mycompany.com.pfx'
         labels:
             - traefik.enable=true
